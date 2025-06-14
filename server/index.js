@@ -2,8 +2,11 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const cors  = require('cors')
-require('dotenv').config()
 const mongoose = require('mongoose')
+const MongoStore = require('connect-mongo')
+const session = require('express-session')
+const passport = require('passport')
+require('dotenv').config()
 require('./config/passport')
 
 app.use(cors({
@@ -13,10 +16,10 @@ app.use(cors({
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParse: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useNewUrlParser: true
 }).then(()=> console.log("MongoDB connected"))
-  .catch(err=> console.log(err)) 
+  .catch(err=> console.log(err))
   
   
 app.use(session({
@@ -27,18 +30,17 @@ app.use(session({
   cookie: {
   maxAge: 1000*60*60*24*7, 
   httpOnly: true,
-  secure: false //change in prod
+  secure: false //change to true in prod - cip
 }
 }))
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', (req,res)=> res.send('Hello developer !'))
+app.get('/', (req,res)=> res.json('Hello developer !'))
 
-const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
-
+// const authRoutes = require('./routes/authRoutes');
+// app.use('/api/auth', authRoutes);
 
 
 app.listen(port, () => {

@@ -1,0 +1,19 @@
+const mongoose = require('mongoose')
+
+const projectSchema = new mongoose.Schema({
+
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    
+    name: { type: String, required: true }, // e.g., "User Management"
+
+    slug: { type: String, required: true }, // e.g., "users" → used in the URL
+
+    description: { type: String },
+
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+})
+
+module.exports = mongoose.model('Project', projectSchema)
