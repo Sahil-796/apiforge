@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const passport = require('passport');
 const User = require('../models/User');
-
+const bcrypt = require('bcryptjs')
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -19,6 +19,7 @@ router.post('/signup', async (req, res) => {
 
   try{
 
+    const email = req.body.email
       const existingUser = await User.findOne({email, provider: 'local'})
       if (existingUser) return res.status(400).json({message: 'User already exists'})
       
