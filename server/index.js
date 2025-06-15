@@ -39,8 +39,10 @@ app.use(passport.session());
 
 app.get('/', (req,res)=> res.json('Hello developer !'))
 
-// const authRoutes = require('./routes/authRoutes');
-// app.use('/api/auth', authRoutes);
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+
+
 
 
 app.listen(port, () => {

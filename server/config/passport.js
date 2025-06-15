@@ -11,7 +11,7 @@ passport.use(new LocalStrategy( {usernameField:'email'},
             const user = await User.findOne({email, provider:'local'})
             if (!user) return done(null, false, {message: 'User not found'})
 
-            const isMatch = await bcrypt.compare(password, user.password)
+            const isMatch = bcrypt.compare(password, user.password)
             
             if(!isMatch) return done(null, false, {message: 'Incorrect password'})
 
@@ -24,11 +24,11 @@ passport.use(new LocalStrategy( {usernameField:'email'},
 
 passport.use(new GoogleStrategy ({
     clientID: process.env.GOOGLE_CLIENT_ID,
-    clinetSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/api/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
     try{
-        const existingUser = await isSecureContext.findOne({email: profile.emails[0].value})
+        const existingUser = await User.findOne({email: profile.emails[0].value})
 
         if(existingUser) return done(null, existingUser)
         
@@ -37,7 +37,6 @@ passport.use(new GoogleStrategy ({
             googleId: profile.id,
             provider: 'google',
             username: null
-
         })
 
         return done(null, newUser)
@@ -47,14 +46,14 @@ passport.use(new GoogleStrategy ({
 
 //serialiser and desrialise are from passport.js 
 //they take user.id from either local or google strategy
-//serialiser - called once after login, stores is to session cookie
+//serialiser - called once after login, stores id to session cookie
 //desrialiser runs on every request after login, takes id, fetches full user from mongodb
 //req.user comes from here, desrialiser - the chad 🗿
 
 passport.serializeUser((user, done) => {
     done(null, user.id)
 }) 
-passport.deserializeUser(async (user, done) => {
+passport.deserializeUser(async (id, done) => {
     try {
         const user = await User.findById(id)
         done(null, user)
