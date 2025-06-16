@@ -41,6 +41,20 @@ router.post('/signup', async (req, res) => {
   } catch(err){res.status(500).json({ message: 'Error creating user', error: err.message})}
 })
 
+
+router.get('/logout',(req, res)=> {
+
+  req.logout(()=> {
+
+    req.session.destroy((err) => {
+      if(err) return res.status(500).json({message: 'Logout not successful'})
+      res.clearCookie('connect.sid')
+      res.json({message: 'Logged out successfully'})
+    })
+  })
+})
+
+
 // Start Google login
 router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })

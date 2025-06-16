@@ -42,7 +42,11 @@ app.get('/', (req,res)=> res.json('Hello developer !'))
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const data = require('./routes/me');
+app.use('/api/', data);  //   api/me
 
+const create = require('./routes/create');
+app.use('/api/create', create);
 
 
 app.listen(port, () => {
