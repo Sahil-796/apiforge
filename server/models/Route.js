@@ -20,7 +20,7 @@ const routeSchema = new mongoose.Schema({
 
     schema: {
     type: Map,
-    of: String, 
+    of: mongoose.Schema.Types.Mixed, 
     default: {}
     },
 

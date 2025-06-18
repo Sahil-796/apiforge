@@ -10,6 +10,8 @@ const projectSchema = new mongoose.Schema({
 
     description: { type: String },
 
+    apiKey: { type: String, unique: true, index: true },
+
     createdAt: {
         type: Date,
         default: Date.now

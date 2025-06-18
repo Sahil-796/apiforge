@@ -13,12 +13,13 @@ const ensureAuth = (req, res, next) => {
 
 router.get('/me', ensureAuth, async (req, res)=> {
     const userProjects = await Project.find({userId:req.user._id})
-    const allRoutes = await Route.find({ProjectId:req.user._id})
+    const allRoutes = await Route.find({userId:req.user._id})
 
+    
     const projects = userProjects.map( project => {
         const projectRoutes = allRoutes.filter(route => String(route.ProjectId) === String(project._id))
         return {
-            ...projects.toObject(),
+            ...project.toObject(),
             routes: projectRoutes
         }
     })
@@ -30,7 +31,6 @@ router.get('/me', ensureAuth, async (req, res)=> {
         projects: projects
 
     }
-    console.log(data)
     return res.json(data)
 })
 

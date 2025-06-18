@@ -3,12 +3,24 @@ const router = express.Router();
 const passport = require('passport');
 const Project = require('../models/Project');
 const Route = require('../models/Route');
+const MockData = require('../models/MockData');
+const crypto = require('crypto');
+
+
 const ensureAuth = (req, res, next) => {
     if(!req.isAuthenticated()) return res.status(401).json({message: "unauthorised"})
     
     return next()
 }
 
+const createChunks = (mockData) => {
+    
+    const chunks = [];
+    for (let i = 0; i < mockData.length; i += 100) {
+        chunks.push(mockData.slice(i, i + 100));
+    }
+    return chunks;
+}
 
 router.post('/project', ensureAuth, async (req, res)=> {
 
@@ -19,11 +31,14 @@ router.post('/project', ensureAuth, async (req, res)=> {
             return res.status(409).json({ message: "Project slug already exists." })
         }
 
+        const apiKey = crypto.randomBytes(32).toString('hex');
+
         await Project.create({
             userId: req.user._id,
             name: req.body.projectName,
             slug: req.body.projectSlug,
             description: req.body.projectDescription,
+            apiKey: apiKey
         })
         res.status(201).json({message:'Project created'})
 } catch (err) {return res.status(500).json({message:'Internal server error', err})}
@@ -60,8 +75,25 @@ router.post('/route', ensureAuth, async (req, res)=> {
             logic,
             schema
         })
+        
+        const routeId = route._id
 
-        res.status(201).json({message:'Route created', route})
+        if (Array.isArray(mockData) && mockData.length > 0) {
+            const chunks = createChunks(mockData);
+            // Insert each chunk as a MockData document
+            await Promise.all(
+            chunks.map((chunk, idx) =>
+                MockData.create({
+                routeId: routeId,
+                index: idx,
+                data: chunk
+                })
+            )
+            );
+        }
+
+
+        res.status(201).json({message:'Route created'})
 
 } catch (err) {
     console.error(err)
