@@ -48,6 +48,8 @@ app.use('/api/', data);  //   api/me
 const create = require('./routes/create');
 app.use('/api/create', create);
 
+const customEndpoints = require('./routes/customEndpoints');
+app.use('/apiforge', customEndpoints);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
