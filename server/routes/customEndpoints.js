@@ -4,7 +4,7 @@ const Project = require('../models/Project')
 const Route = require('../models/Route')
 const MockData = require('../models/MockData')
 const { v4: uuidv4 } = require('uuid');
-const ivm = require('isolated-vm')
+const runIsolatedFunction = require('../config/ivm')
 
 
 router.get('/:slug/:path', async (req, res) => {
@@ -90,12 +90,20 @@ router.post('/:slug/:path', async (req, res) => {
         const route = await Route.findOne({ path: path, ProjectId: project._id })
         if (!route) return res.status(404).json({ message: 'Route not found' })
 
-        let lastChunk = await MockData.findOne({ routeId: route._id }).sort({ index: -1 })
+        if (route.logic?.POST) {
+            try {
+                data = await runIsolatedFunction(route.logic.POST, data);
+            } catch (err) {
+                return res.status(400).json({ message: 'Invalid custom logic', error: err.message });
+            }
+        }
 
         const newData = {
-                ...data,
-                id: uuidv4()
-            }
+            ...data,
+            id: uuidv4()
+        }
+        let lastChunk = await MockData.findOne({ routeId: route._id }).sort({ index: -1 })
+
             
 
         if (!lastChunk) {
