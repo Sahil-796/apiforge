@@ -77,7 +77,7 @@ router.post('/:slug/:path', async (req, res) => {
     try {
         const slug = req.params.slug
         const path = req.params.path
-        const data = req.body 
+        let data = req.body 
 
         const apiKey = req.headers['x-api-key'];
         if (!apiKey) {
@@ -86,13 +86,16 @@ router.post('/:slug/:path', async (req, res) => {
 
         const project = await Project.findOne({ apiKey: apiKey, slug: slug })
         if (!project) return res.status(404).json({ message: 'Project not found' })
+       
+        const route = await Route.findOne({ path: `/${path}`, ProjectId: project._id })
+        
 
-        const route = await Route.findOne({ path: path, ProjectId: project._id })
+
         if (!route) return res.status(404).json({ message: 'Route not found' })
 
-        if (route.logic?.POST) {
+        if (route.logic.post) {
             try {
-                data = await runIsolatedFunction(route.logic.POST, data);
+                data = await runIsolatedFunction(route.logic.post, data);
             } catch (err) {
                 return res.status(400).json({ message: 'Invalid custom logic', error: err.message });
             }

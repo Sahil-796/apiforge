@@ -11,7 +11,7 @@ const routeSchema = new mongoose.Schema({
     methods:   [{ type: String, enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] }],
 
     logic: {
-    POST:   { type: String },
+     type: String 
     },
 
     schema: {
