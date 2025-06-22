@@ -10,7 +10,7 @@ require('dotenv').config()
 require('./config/passport')
 
 app.use(cors({
-  origin: '*',
+  origin: 'http://localhost:5173', // replace with your frontend's URL
   credentials: true
 }));
 app.use(express.json());
