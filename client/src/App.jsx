@@ -1,19 +1,24 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { DataProvider } from './context/DataContext';
+import { useAuth } from './context/DataContext';
 import Login from './components/Login';
 import Home from './pages/Home';
 
 const App = () => {
+
+  const {loading} = useAuth()
+
+  if(loading) {
+    return <div className='text-white text-center py-20'> Loading...</div>
+  }
   return (
-    <Router>
-      <DataProvider>
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
         </Routes>
-      </DataProvider>
-    </Router>
+      
+   
   );
 };
 

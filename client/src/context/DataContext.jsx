@@ -20,7 +20,7 @@ export const DataProvider = ({children}) => {
             const res = await axios.get('http://localhost:3000/api/me', {
                 withCredentials: true
             })
-
+            
             setUser(res.data)
         } catch {
             setUser(null)

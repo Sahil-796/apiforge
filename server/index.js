@@ -25,12 +25,13 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(session({
   secret: 'secret123',
   resave: false,
-  saveUninitiated: false,
+  saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI}),
   cookie: {
   maxAge: 1000*60*60*24*7, 
   httpOnly: true,
-  secure: false //change to true in prod - cip
+  secure: false, //change to true in prod - cip
+  sameSite: 'lax'
 }
 }))
 
