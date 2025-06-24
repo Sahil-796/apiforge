@@ -19,15 +19,19 @@ const Login = () => {
         setLoading(true)
 
         try {
-          const res = await axios.post('http://localhost:3000/api/auth/login',
+          const res = await axios.post('https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/login',
             {email, password},
-            {withCredentials: true}
+            {withCredentials: true,
+              headers: {
+      'Content-Type': 'application/json'
+    }
+            }
           );
           // handle success, e.g. set user context or redirect
-           navigate('/');
+          navigate('/');
           setUser(res.data.user)
         } catch (err) {
-          console.log(err)
+          console.log(err || 'yay')
           setError(err.response?.data?.message || 'Login failed');
         } finally {
           setLoading(false);
@@ -35,7 +39,7 @@ const Login = () => {
         }
     
         const handleGoogleLogin = () => {
-          window.location.href = 'http://localhost:3000/api/auth/google';
+          window.location.href = 'https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/google';
 
         };
 

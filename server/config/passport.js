@@ -12,7 +12,7 @@ passport.use(new LocalStrategy( {usernameField:'email'},
             const user = await User.findOne({email, googleId: null})
             if (!user) return done(null, false, {message: 'User not found'})
 
-            const isMatch = bcrypt.compare(password, user.password)
+            const isMatch = await bcrypt.compare(password, user.password)
             
             if(!isMatch) return done(null, false, {message: 'Incorrect password'})
 
@@ -23,13 +23,13 @@ passport.use(new LocalStrategy( {usernameField:'email'},
     }
 ))
 
-console.log(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET,)
+
 
 passport.use(new GoogleStrategy ({
 
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/api/auth/google/callback'
+    callbackURL: 'https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
     try{
         const existingUser = await User.findOne({email: profile.emails[0].value})

@@ -7,12 +7,20 @@ const MongoStore = require('connect-mongo')
 const session = require('express-session')
 const passport = require('passport')
 require('dotenv').config()
-require('./config/passport')
+
 
 app.use(cors({
-  origin: 'http://localhost:5173', // replace with your frontend's URL
+  origin: [
+    'http://localhost:5173',
+    'https://bfc56k0q-5173.inc1.devtunnels.ms'
+  ],
   credentials: true
 }));
+
+
+
+
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -28,7 +36,7 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI}),
   cookie: {
-  maxAge: 1000*60*60*24*7, 
+    maxAge: 1000*60*60*24*7, 
   httpOnly: true,
   secure: false, //change to true in prod - cip
   sameSite: 'lax'
@@ -37,6 +45,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+require('./config/passport')
 
 app.get('/', (req,res)=> res.json('Hello developer !'))
 

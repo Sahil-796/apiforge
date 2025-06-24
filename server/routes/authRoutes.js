@@ -3,6 +3,15 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs')
+const cors  = require('cors')
+
+const corsOptions = {
+  origin: 'https://bfc56k0q-5173.inc1.devtunnels.ms',
+  credentials: true
+};
+
+// ✅ Allow preflight request for POST /login
+router.options('/login', cors(corsOptions));
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -57,14 +66,14 @@ router.get('/logout',(req, res)=> {
 
 // Start Google login
 router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
+  passport.authenticate('google', { scope: ['profile', 'email'], prompt: 'select_account' })
 );
 
 // Google callback route
 router.get('/google/callback',
   passport.authenticate('google', {
     failureRedirect: 'api/auth/failure',
-    successRedirect: 'http://localhost:5173',
+    successRedirect: 'https://bfc56k0q-5173.inc1.devtunnels.ms/',
   }),
    
 );
