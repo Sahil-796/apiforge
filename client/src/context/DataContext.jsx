@@ -17,7 +17,7 @@ export const DataProvider = ({children}) => {
 
     const fetchUser = async () => {
         try{
-            const res = await axios.get('https://bfc56k0q-3000.inc1.devtunnels.ms/api/me', {
+            const res = await axios.get('http://localhost:3000/api/me', {
                 withCredentials: true
             })
             
@@ -30,7 +30,7 @@ export const DataProvider = ({children}) => {
     }
 
     const logout = async () => {
-        await axios.get('https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/logout',{
+        await axios.get('http://localhost:3000/api/auth/logout',{
             withCredentials: true
         })
         setUser(null)

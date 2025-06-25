@@ -3,28 +3,23 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs')
-const cors  = require('cors')
 
-const corsOptions = {
-  origin: 'https://bfc56k0q-5173.inc1.devtunnels.ms',
-  credentials: true
-};
 
-// ✅ Allow preflight request for POST /login
-router.options('/login', cors(corsOptions));
 
 router.post('/login', (req, res, next) => {
+  
   passport.authenticate('local', (err, user, info) => {
     if(err) return next(err)
     if(!user) return res.status(401).json({ message: info.message || 'Login failed'})
     req.login(user, (err)=> {
+      
       if (err) return next(err)
         return res.json({ message : 'Login successful', user})
       })
   }) (req, res, next) //2nd parantheses immediately executes it. 
 })
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res, next) => {
 
   try{
 
@@ -72,7 +67,7 @@ router.get('/google',
 // Google callback route
 router.get('/google/callback',
   passport.authenticate('google', {
-    failureRedirect: 'api/auth/failure',
+    failureRedirect: '/api/auth/failure',
     successRedirect: 'https://bfc56k0q-5173.inc1.devtunnels.ms/',
   }),
    

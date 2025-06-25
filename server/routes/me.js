@@ -20,8 +20,17 @@ router.get('/me', ensureAuth, async (req, res)=> {
         email: req.user.email,
         projects: (userProjects || [])
     }
-    return res.json(data)
+    return res.status(200).json(data)
 })
 
+
+router.post('/routes', ensureAuth, async (req, res)=> {
+
+    const routes = await Route.find({ProjectId:req.projectId})
+
+    if(!routes) return res.status(404).json({message:"Routes not found"})
+
+    return res.status(200).json(routes)
+})
 
 module.exports = router

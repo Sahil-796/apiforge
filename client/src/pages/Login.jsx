@@ -19,7 +19,7 @@ const Login = () => {
         setLoading(true)
 
         try {
-          const res = await axios.post('https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/login',
+          const res = await axios.post('http://localhost:3000/api/auth/login',
             {email, password},
             {withCredentials: true,
               headers: {
@@ -39,7 +39,7 @@ const Login = () => {
         }
     
         const handleGoogleLogin = () => {
-          window.location.href = 'https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/google';
+          window.location.href = 'http://localhost:3000/api/auth/google';
 
         };
 
