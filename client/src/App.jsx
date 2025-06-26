@@ -4,6 +4,7 @@ import { useAuth } from './context/DataContext';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Layout from './pages/Layout';
+import ProjectPage from './pages/ProjectPage';
 
 const App = () => {
 
@@ -19,6 +20,7 @@ const App = () => {
 
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/project/:id" element={<ProjectPage />} />
       </Route>
     </Routes>
    

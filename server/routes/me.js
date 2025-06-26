@@ -6,13 +6,16 @@ const Project = require('../models/Project')
 const Route = require('../models/Route')
 
 const ensureAuth = (req, res, next) => {
-    if(!req.isAuthenticated()) return res.status(401).json({message: "unauthorised"})
+    if(!req.isAuthenticated()) {
+        
+        console.log(req.user)
+        return res.status(401).json({message: "unauthorised"})}
     
     return next()
 }
 
 router.get('/me', ensureAuth, async (req, res)=> {
-    const userProjects = await Project.find({userId:req.user._id})
+    const userProjects = await Project.find({userId:req.user._id}).sort({updatedAt: -1})
 
 
     const data = {
@@ -26,7 +29,7 @@ router.get('/me', ensureAuth, async (req, res)=> {
 
 router.post('/routes', ensureAuth, async (req, res)=> {
 
-    const routes = await Route.find({ProjectId:req.projectId})
+    const routes = await Route.find({ProjectId:req.projectId}).sort({updatedAt: -1})
 
     if(!routes) return res.status(404).json({message:"Routes not found"})
 

@@ -29,7 +29,7 @@ passport.use(new GoogleStrategy ({
 
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'https://bfc56k0q-3000.inc1.devtunnels.ms/api/auth/google/callback'
+    callbackURL: 'http://localhost:3000/api/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
     try{
         const existingUser = await User.findOne({email: profile.emails[0].value})
@@ -37,10 +37,10 @@ passport.use(new GoogleStrategy ({
         if(existingUser) return done(null, existingUser)
         
         const newUser = await User.create({
+            username: profile.displayName,
             email: profile.emails[0].value,
             googleId: profile.id,
             provider: 'google',
-            username: null
         })
 
         return done(null, newUser)

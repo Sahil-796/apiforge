@@ -20,7 +20,7 @@ const routeSchema = new mongoose.Schema({
     default: {}
     },
 
-    createdAt: { type: Date, default: Date.now }
-})
+
+}, { timestamps: true })
 
 module.exports = mongoose.model('Route', routeSchema)
