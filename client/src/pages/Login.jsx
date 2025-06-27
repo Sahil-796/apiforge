@@ -6,7 +6,7 @@ import axios from 'axios'
 const Login = () => {
   const navigate = useNavigate()
   
-   const { setUser } = useAuth()
+   const { fetchUser } = useAuth()
    
    const [error, setError] = useState("")
    const [email, setEmail] = useState("")
@@ -23,15 +23,16 @@ const Login = () => {
             {email, password},
             {withCredentials: true,
               headers: {
-      'Content-Type': 'application/json'
-    }
+                'Content-Type': 'application/json'
+              }
             }
           );
+          fetchUser()
           // handle success, e.g. set user context or redirect
           navigate('/');
-          setUser(res.data.user)
+    
         } catch (err) {
-          console.log(err || 'yay')
+    
           setError(err.response?.data?.message || 'Login failed');
         } finally {
           setLoading(false);

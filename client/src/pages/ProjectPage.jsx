@@ -1,42 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { useAuth } from '../context/DataContext'
+import { motion, AnimatePresence  } from 'framer-motion'
+import { useCurrent } from '../context/CurrentContext';
+import { useParams } from 'react-router-dom';
 
-const mockRoutes = [
-  {
-    _id: "r1",
-    path: "/users",
-    methods: ["GET", "POST"],
-    logic: "return users.filter(u => u.active); // example VM2 code",
-    updatedAt: "2025-06-25T13:45:00.000Z",
-    schema: {
-      name: "string",
-      email: "string",
-    }
-  },
-  {
-    _id: "r2",
-    path: "/users/:id",
-    methods: ["GET", "PUT", "DELETE"],
-    // No logic here
-    updatedAt: "2025-06-24T11:00:00.000Z",
-    schema: {
-      id: "string"
-    }
-  }
-];
 
 const ProjectPage = () => {
-  const { slug } = useParams(); // e.g., project slug like 'users'
-  const [routes, setRoutes] = useState([]);
 
-  useEffect(() => {
-    // Later replace with actual fetch from backend/context
-    setRoutes(mockRoutes);
-  }, []);
+  const {loading, projects} = useAuth()
+  const { id } = useParams()
 
-  const apiKey = 'apeljenilapkjskrs'
-  const [show, setShow] = useState(false)
+  
+  const { openProject, setOpenProject, routes, setOpenRoute } = useCurrent();
+    const [show, setShow] = useState(false) 
+  
+  useEffect(()=> {
+    if (!openProject && projects && Array.isArray(projects)) {
+      const found = projects.find(p => p._id === id)
+      if (found) setOpenProject(found)
+        
+    }
+  }, [id, projects])
+  if (loading ) {
+     return <div className='text-white text-center py-20'> Loading...</div>;
+   }
+
+  const name = openProject.name
+  const slug = openProject.slug
+  const apiKey = openProject.apiKey
+
 
   return (
 
@@ -51,21 +43,54 @@ const ProjectPage = () => {
       Name: 
     </p>
     <p className="text-sm text-gray-300">
-      slug: 
+      Slug: 
     </p>
-    <p className="text-sm text-gray-300">
-      Api Key: {show?apiKey:"*****"}
-    </p>
-    <button onClick={()=>setShow((p)=>!p)}>
-        Show api key
-    </button>
+
+
+<p className="text-sm text-gray-300 flex items-center gap-2">
+  API Key:
+  <AnimatePresence mode="wait">
+    {show ? (
+      <motion.span
+        key="visible"
+        initial={{ opacity: 0, x: 10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        transition={{ duration: 0.3 }}
+        className="text-green-400 font-mono"
+      >
+        {apiKey}
+      </motion.span>
+    ) : (
+      <motion.span
+        key="hidden"
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 10 }}
+        transition={{ duration: 0.3 }}
+        className="text-gray-500"
+      >
+        •••••••••••
+      </motion.span>
+    )}
+  </AnimatePresence>
+</p>
+
+<button
+  onClick={() => setShow(!show)}
+  className="text-blue-400 text-xs hover:underline"
+>
+  {show ? "Hide" : "Show"}
+</button>
+   
+
 
   </div>
 
 
      
 
-      {routes.length === 0 ? (
+      {!routes || routes.length === 0 ? (
         <p className="text-gray-400">No routes found.</p>
       ) : (
         <div className="gap-4 flex flex-col">

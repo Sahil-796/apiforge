@@ -9,6 +9,7 @@ export const useAuth = () => useContext(DataContext);
 export const DataProvider = ({children}) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [projects, setprojects] = useState(null)
    
 
     const navigate = useNavigate()
@@ -17,13 +18,16 @@ export const DataProvider = ({children}) => {
 
     const fetchUser = async () => {
         try{
+            setLoading(true)
             const res = await axios.get('http://localhost:3000/api/me', {
                 withCredentials: true
             })
             setUser(res.data)
-           
+            setprojects(res.data.projects)
+                 
         } catch {
             setUser(null)
+            setprojects(null)
         } finally {
             setLoading(false)
         }
@@ -43,7 +47,7 @@ export const DataProvider = ({children}) => {
 
     return ( 
         <DataContext.Provider
-            value={{user, setUser, logout, loading}}>
+            value={{user, setUser, logout, loading, setLoading, projects, fetchUser}}>
             {children}
         </DataContext.Provider>
     )

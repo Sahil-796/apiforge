@@ -2,66 +2,22 @@ import React, { useEffect } from 'react'
 import {useAuth} from '../context/DataContext'
 import { Navigate, useNavigate } from 'react-router-dom';
 import {motion} from 'framer-motion'
-
+import { useCurrent } from '../context/CurrentContext.jsx'
 
 
 const Home = () => {
-     const { user, logout } = useAuth()
+     const { user, logout, loading, projects } = useAuth()
+     const { setOpenProject, fetchRoutes } = useCurrent()
+     
      const navigate = useNavigate()
 
-      if(!user) {
-        console.log(user)
-        return <Navigate to='/login' replace/>
-      }
-     
-  const projects = [
-  {
-    userId: "60f1e7e2c9e77c3f20a1b111",
-    name: "User Management",
-    slug: "users",
-    description: "Handles user registration, login, and profile management.",
-    apiKey: "api_123456789_users",
-    createdAt: new Date("2025-06-20T10:00:00.000Z"),
-    updatedAt: new Date("2025-06-20T10:00:00.000Z"),
-  },
-  {
-    userId: "60f1e7e2c9e77c3f20a1b111",
-    name: "Product Catalog",
-    slug: "products",
-    description: "API for managing product listings and details.",
-    apiKey: "api_987654321_products",
-    createdAt: new Date("2025-06-21T11:00:00.000Z"),
-    updatedAt: new Date("2025-06-21T11:00:00.000Z"),
-  },
-  {
-    userId: "60f1e7e2c9e77c3f20a1b222",
-    name: "Order Processing",
-    slug: "orders",
-    description: "Handles creation and tracking of customer orders.",
-    apiKey: "api_456123789_orders",
-    createdAt: new Date("2025-06-22T12:00:00.000Z"),
-    updatedAt: new Date("2025-06-22T12:00:00.000Z"),
-  },
-  {
-    userId: "60f1e7e2c9e77c3f20a1b222",
-    name: "Analytics Dashboard",
-    slug: "analytics",
-    description: "Provides data and metrics about system usage.",
-    apiKey: "api_789321654_analytics",
-    createdAt: new Date("2025-06-23T13:00:00.000Z"),
-    updatedAt: new Date("2025-06-23T13:00:00.000Z"),
-  },
-  {
-    userId: "60f1e7e2c9e77c3f20a1b333",
-    name: "Feedback Service",
-    slug: "feedback",
-    description: "Collects and manages user feedback and suggestions.",
-    apiKey: "api_321654987_feedback",
-    createdAt: new Date("2025-06-24T14:00:00.000Z"),
-    updatedAt: new Date("2025-06-24T14:00:00.000Z"),
-  }
-];
 
+     if(loading) {
+      return <div className='text-white text-center py-20'> Loading...</div>
+     }
+     if (!user) {
+  return <div className='text-white text-center py-20'>User not found.</div>;
+}
 
 
   return (
@@ -87,8 +43,11 @@ const Home = () => {
 
   {/* Sample Projects */}
   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-    {
-
+    
+{console.log(user)}
+ {projects.length === 0 ? (
+        <p className="text-gray-400">No routes found.</p>
+      ) : (
   projects.map((project) => ( 
       <motion.div
         key={project.id}
@@ -103,14 +62,18 @@ const Home = () => {
         <h2 className="text-md text-gray-400">/{project.slug}</h2>
         </div>
         <p className="text-xs text-gray-500 mt-2">Last updated: {new Date(project.updatedAt).toLocaleString()}</p>
+        
         <button
-          onClick={() => navigate(`/project/${project.name}`)}
+          onClick={() => {
+            setOpenProject(project)
+            
+            navigate(`/project/${project._id}`)}}
           className="mt-4 inline-block text-sm text-blue-500 hover:underline"
         >
           View Details →
         </button>
       </motion.div>
-    ))}
+    )))}
   </div>
 </div>
 

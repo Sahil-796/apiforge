@@ -8,11 +8,8 @@ import ProjectPage from './pages/ProjectPage';
 
 const App = () => {
 
-  const {loading} = useAuth()
 
-  // if(loading) {
-  //   return <div className='text-white text-center py-20'> Loading...</div>
-  // }
+  
   return (
     <Routes>
      

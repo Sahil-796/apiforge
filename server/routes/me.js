@@ -27,9 +27,9 @@ router.get('/me', ensureAuth, async (req, res)=> {
 })
 
 
-router.post('/routes', ensureAuth, async (req, res)=> {
+router.post('/routes',  async (req, res)=> {
 
-    const routes = await Route.find({ProjectId:req.projectId}).sort({updatedAt: -1})
+    const routes = await Route.find({ProjectId:req.body.projectId}).sort({updatedAt: -1})
 
     if(!routes) return res.status(404).json({message:"Routes not found"})
 
