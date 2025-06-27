@@ -1,94 +1,111 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../context/DataContext'
-import { motion, AnimatePresence  } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useCurrent } from '../context/CurrentContext';
 import { useParams } from 'react-router-dom';
 
-
 const ProjectPage = () => {
-
-  const {loading, projects} = useAuth()
+  const { loading, projects } = useAuth()
   const { id } = useParams()
-
-  
   const { openProject, setOpenProject, routes, setOpenRoute } = useCurrent();
-    const [show, setShow] = useState(false) 
-  
-  useEffect(()=> {
-    if (!openProject && projects && Array.isArray(projects)) {
-      const found = projects.find(p => p._id === id)
-      if (found) setOpenProject(found)
-        
+  const [show, setShow] = useState(false)
+  const [projectNotFound, setProjectNotFound] = useState(false)
+
+  useEffect(() => {
+    // Reset project not found state when id changes
+    setProjectNotFound(false)
+    
+    // Only try to find project if we have projects array
+    if (projects && Array.isArray(projects)) {
+      if (projects.length > 0) {
+        const found = projects.find(p => p._id === id)
+        if (found) {
+          // Only set if it's different to avoid unnecessary re-renders
+          if (!openProject || openProject._id !== found._id) {
+            setOpenProject(found)
+          }
+        } else {
+          // Project not found in the loaded projects
+          setProjectNotFound(true)
+        }
+      } else {
+        // Projects array is empty
+        setProjectNotFound(true)
+      }
     }
-  }, [id, projects])
-  if (loading ) {
-     return <div className='text-white text-center py-20'> Loading...</div>;
-   }
+    // If projects is null/undefined, we're still loading, so don't set projectNotFound
+  }, [id, projects, openProject, setOpenProject])
+
+  // Show loading while auth is loading or projects haven't been loaded yet
+  if (loading || !projects || !Array.isArray(projects)) {
+    return <div className='text-white text-center py-20'>Loading...</div>;
+  }
+
+  // Show project not found if we've checked and it doesn't exist
+  if (projectNotFound) {
+    return <div className='text-white text-center py-20'>Project not found.</div>;
+  }
+
+  // Show loading while waiting for project to be set in context
+  if (!openProject) {
+    return <div className='text-white text-center py-20'>Loading project...</div>;
+  }
 
   const name = openProject.name
   const slug = openProject.slug
   const apiKey = openProject.apiKey
 
-
   return (
-
-    
     <div className="p-6 text-white max-w-5xl mx-auto flex flex-col gap-6">
+      <h1 className="text-2xl font-bold">
+        Available Routes <span className="text-blue-400">({slug})</span>
+      </h1>
 
-         <h1 className="text-2xl font-bold">Available Routes<span className="text-blue-400">{slug}</span></h1>
+      <div className="rounded-xl bg-[#2f2f2f] p-6 shadow-sm border border-[#3a3a3a]">
+        <h2 className="text-lg font-medium mb-2">Project Overview</h2>
+        <p className="text-sm text-gray-300">
+          Name: <span className="text-white">{name}</span>
+        </p>
+        <p className="text-sm text-gray-300">
+          Slug: <span className="text-white">{slug}</span>
+        </p>
 
-          <div className="rounded-xl bg-[#2f2f2f] p-6 shadow-sm border border-[#3a3a3a]">
-    <h2 className="text-lg font-medium mb-2">Project Overview</h2>
-    <p className="text-sm text-gray-300">
-      Name: 
-    </p>
-    <p className="text-sm text-gray-300">
-      Slug: 
-    </p>
+        <p className="text-sm text-gray-300 flex items-center gap-2">
+          API Key:
+          <AnimatePresence mode="wait">
+            {show ? (
+              <motion.span
+                key="visible"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.3 }}
+                className="text-green-400 font-mono"
+              >
+                {apiKey}
+              </motion.span>
+            ) : (
+              <motion.span
+                key="hidden"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.3 }}
+                className="text-gray-500"
+              >
+                •••••••••••
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </p>
 
-
-<p className="text-sm text-gray-300 flex items-center gap-2">
-  API Key:
-  <AnimatePresence mode="wait">
-    {show ? (
-      <motion.span
-        key="visible"
-        initial={{ opacity: 0, x: 10 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -10 }}
-        transition={{ duration: 0.3 }}
-        className="text-green-400 font-mono"
-      >
-        {apiKey}
-      </motion.span>
-    ) : (
-      <motion.span
-        key="hidden"
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: 10 }}
-        transition={{ duration: 0.3 }}
-        className="text-gray-500"
-      >
-        •••••••••••
-      </motion.span>
-    )}
-  </AnimatePresence>
-</p>
-
-<button
-  onClick={() => setShow(!show)}
-  className="text-blue-400 text-xs hover:underline"
->
-  {show ? "Hide" : "Show"}
-</button>
-   
-
-
-  </div>
-
-
-     
+        <button
+          onClick={() => setShow(!show)}
+          className="text-blue-400 text-xs hover:underline mt-1"
+        >
+          {show ? "Hide" : "Show"}
+        </button>
+      </div>
 
       {!routes || routes.length === 0 ? (
         <p className="text-gray-400">No routes found.</p>
@@ -122,16 +139,16 @@ const ProjectPage = () => {
                 ))}
               </div>
 
-{route.logic ? (
-  <div className="text-xs text-gray-300 mb-3">
-    <p className="mb-1 text-gray-400">Logic:</p>
-    <pre className="bg-[#111] p-3 rounded text-green-300 whitespace-pre-wrap overflow-auto max-h-48 text-xs leading-relaxed">
-      {route.logic}
-    </pre>
-  </div>
-) : (
-  <p className="text-xs text-gray-300 mb-2">Logic - default</p>
-)}
+              {route.logic ? (
+                <div className="text-xs text-gray-300 mb-3">
+                  <p className="mb-1 text-gray-400">Logic:</p>
+                  <pre className="bg-[#111] p-3 rounded text-green-300 whitespace-pre-wrap overflow-auto max-h-48 text-xs leading-relaxed">
+                    {route.logic}
+                  </pre>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-300 mb-2">Logic - default</p>
+              )}
 
               {route.schema && Object.keys(route.schema).length > 0 && (
                 <div className="text-xs text-gray-400">
