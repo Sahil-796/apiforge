@@ -22,7 +22,8 @@ router.get('/:slug/:path', async (req, res) => {
         const project = await Project.findOne({ apiKey: apiKey, slug: slug })
         if (!project) return res.status(404).json({ message: 'Project not found' })
 
-        const route = await Route.findOne({ path: path, ProjectId: project._id })
+        const route = await Route.findOne({ path: `/${path}`, ProjectId: project._id })
+        console.log(project)
         if (!route) return res.status(404).json({ message: 'Route not found' })
 
         const mockData = await MockData.findOne({ routeId: route._id, index: page })
@@ -51,7 +52,7 @@ router.get('/:slug/:path/:id', async(req, res)=>{
     const project = await Project.findOne({apiKey:apiKey, slug:slug})
     if(!project) return res.status(404).json({message:'Project not found'})
     
-    const route = await Route.findOne({path:path, ProjectId: project._id})
+    const route = await Route.findOne({path:`/${path}`, ProjectId: project._id})
     if(!route) return res.status(404).json({message:'Route not found'})
    
     const chunk = await MockData.findOne({
