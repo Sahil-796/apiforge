@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {useAuth} from '../context/DataContext'
 import { Navigate, useNavigate } from 'react-router-dom';
 import {motion} from 'framer-motion'
 import { useCurrent } from '../context/CurrentContext.jsx'
-import Loading from '../components/Loading'; // Import the new Loading component
+import Loading from '../components/Loading';
+import CreateProjectModal from '../components/CreateProjectModal'; // Import the modal
 
 const Home = () => {
      const { user, logout, loading, projects } = useAuth()
      const { setOpenProject, fetchRoutes } = useCurrent()
+     const [isModalOpen, setIsModalOpen] = useState(false)
      
      const navigate = useNavigate()
 
@@ -32,13 +34,39 @@ const Home = () => {
       );
     }
 
+    // Handle project creation
+    const handleCreateProject = async (projectData) => {
+      try {
+        // Replace this with your actual API call
+        console.log('Creating project:', projectData)
+        
+        const res = await axios.post('localhos')
+        // Example API call (replace with your actual implementation):
+        // const response = await fetch('/api/projects', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(projectData)
+        // })
+        // const newProject = await response.json()
+        
+        // After successful creation, you might want to:
+        // 1. Refresh the projects list
+        // 2. Navigate to the new project
+        // 3. Show a success message
+        
+      } catch (error) {
+        console.error('Error creating project:', error)
+        throw error // Re-throw to let modal handle the error state
+      }
+    }
+
   return (
     <div>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h1 className="text-xl md:text-2xl font-semibold text-white">Dashboard</h1>
           <button
-            onClick={() => navigate("/create")}
+            onClick={() => setIsModalOpen(true)} // Open modal instead of navigating
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm md:text-base transition duration-200 self-start sm:self-auto"
           >
             + Create Project
@@ -98,6 +126,13 @@ const Home = () => {
       >
         Logout
       </button>
+
+      {/* Create Project Modal */}
+      <CreateProjectModal
+        isOpen={isModalOpen}
+        closeModal={() => setIsModalOpen(false)}
+        onSubmit={handleCreateProject}
+      />
     </div>
   )
 }
