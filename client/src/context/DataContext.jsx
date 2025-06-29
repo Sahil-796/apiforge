@@ -9,7 +9,7 @@ export const useAuth = () => useContext(DataContext);
 export const DataProvider = ({children}) => {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
-    const [projects, setprojects] = useState(null)
+    const [projects, setprojects] = useState([])
    
 
     const navigate = useNavigate()
@@ -27,7 +27,7 @@ export const DataProvider = ({children}) => {
                  
         } catch {
             setUser(null)
-            setprojects(null)
+            setprojects([])
         } finally {
             setLoading(false)
         }
@@ -47,7 +47,7 @@ export const DataProvider = ({children}) => {
 
     return ( 
         <DataContext.Provider
-            value={{user, setUser, logout, loading, setLoading, projects, fetchUser}}>
+            value={{user, setUser, logout, loading, setLoading, projects, setprojects, fetchUser}}>
             {children}
         </DataContext.Provider>
     )

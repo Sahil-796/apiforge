@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
-import { motion } from 'framer-motion'
 
 const CreateProjectModal = ({ isOpen, closeModal, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -11,14 +10,26 @@ const CreateProjectModal = ({ isOpen, closeModal, onSubmit }) => {
   })
   const [isLoading, setIsLoading] = useState(false)
 
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({ name: '', slug: '', description: '' })
+      setIsLoading(false)
+    }
+  }, [isOpen])
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value,
-      // Auto-generate slug from name if slug field is empty
-      ...(name === 'name' && !formData.slug && {
-        slug: value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      // Auto-generate slug from name if slug field hasn't been manually edited
+      ...(name === 'name' && {
+        slug: value.toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+          .replace(/\s+/g, '-') // Replace spaces with hyphens
+          .replace(/-+/g, '-') // Replace multiple hyphens with single
+          .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
       })
     }))
   }
@@ -29,11 +40,11 @@ const CreateProjectModal = ({ isOpen, closeModal, onSubmit }) => {
     
     try {
       await onSubmit(formData)
-      // Reset form
-      setFormData({ name: '', slug: '', description: '' })
-      closeModal()
+      // Form will be reset by useEffect when modal closes
+      // Modal will be closed by parent component
     } catch (error) {
       console.error('Error creating project:', error)
+      // Don't close modal on error, keep form data
     } finally {
       setIsLoading(false)
     }
@@ -87,6 +98,7 @@ const CreateProjectModal = ({ isOpen, closeModal, onSubmit }) => {
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Enter project name"
+                      disabled={isLoading}
                     />
                   </div>
 
@@ -103,6 +115,7 @@ const CreateProjectModal = ({ isOpen, closeModal, onSubmit }) => {
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="project-slug"
+                      disabled={isLoading}
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       URL-friendly version of your project name
@@ -121,6 +134,7 @@ const CreateProjectModal = ({ isOpen, closeModal, onSubmit }) => {
                       rows={3}
                       className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                       placeholder="Brief description of your project (optional)"
+                      disabled={isLoading}
                     />
                   </div>
 

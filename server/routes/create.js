@@ -26,21 +26,21 @@ router.post('/project', ensureAuth, async (req, res)=> {
 
     try {
         
-        const existing = await Project.findOne({ userId: req.user._id, slug: req.projectSlug })
+        const existing = await Project.findOne({ userId: req.user._id, slug: req.body.slug })
         if (existing) {
             return res.status(409).json({ message: "Project slug already exists." })
         }
 
         const apiKey = crypto.randomBytes(32).toString('hex');
 
-        await Project.create({
+        const newProject = await Project.create({
             userId: req.user._id,
-            name: req.body.projectName,
-            slug: req.body.projectSlug,
-            description: req.body.projectDescription,
+            name: req.body.name,
+            slug: req.body.slug,
+            description: req.body.description,
             apiKey: apiKey
         })
-        res.status(201).json({message:'Project created'})
+        res.status(201).json(newProject)
 } catch (err) {return res.status(500).json({message:'Internal server error', err})}
 })
 
