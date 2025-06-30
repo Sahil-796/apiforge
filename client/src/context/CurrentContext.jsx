@@ -8,7 +8,7 @@ export const useCurrent = () => useContext(CurrentContext);
 
 export const CurrentProvider = ({children}) => {
     const [openProject, setOpenProject] = useState(null)
-    const [routes, setRoutes] = useState(null)
+    const [routes, setRoutes] = useState([])
     const [openRoute, setOpenRoute] = useState(null)
     
     const {setLoading} = useAuth()
@@ -23,7 +23,7 @@ export const CurrentProvider = ({children}) => {
             setRoutes(res.data)
         } catch (err) {
             console.log(err)
-            setRoutes([]) // Set empty array instead of null to avoid confusion
+            setRoutes([]) 
         } finally {
             setLoading(false)
         }
@@ -43,7 +43,7 @@ export const CurrentProvider = ({children}) => {
     // Clear routes when openProject changes or is cleared
     const clearContext = () => {
         setOpenProject(null);
-        setRoutes(null);
+        setRoutes([]);
         setOpenRoute(null);
     }
 

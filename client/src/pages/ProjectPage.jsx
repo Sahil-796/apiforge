@@ -3,12 +3,13 @@ import { useAuth } from '../context/DataContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCurrent } from '../context/CurrentContext';
 import { useParams } from 'react-router-dom';
+import CreateRouteModal from '../components/CreateRouteModal';
 import Loading from '../components/Loading'; // Import the new Loading component
 
 const ProjectPage = () => {
   const { loading, projects } = useAuth()
   const { id } = useParams()
-  const { openProject, setOpenProject, routes, setOpenRoute } = useCurrent();
+  const { openProject, setOpenProject, routes, setRoutes, setOpenRoute } = useCurrent();
   const [show, setShow] = useState(false)
   const [projectNotFound, setProjectNotFound] = useState(false)
 
@@ -42,6 +43,53 @@ const ProjectPage = () => {
     return <Loading message="Loading projects..." />;
   }
 
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const showSuccess = () => {
+          toast.success('Project created successfully! 🎉', {
+              position: 'bottom-right',
+          });
+      };
+  
+      const showError = (message = 'Error creating project') => {
+          toast.error(message, {
+              position: 'bottom-right',
+          });
+      };
+
+      // Handle project creation
+    const handleCreateRoute = async (routeData) => {
+      try {
+        console.log('Creating project:', routeData)
+        
+        const res = await axios.post('http://localhost:3000/api/create/route',
+            routeData,
+            {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+        
+        // Use the actual response data from server instead of just projectData
+        const newRoute = res.data;
+        setRoutes(prev => [...prev, newRoute])
+        
+        showSuccess()
+        
+      } catch (err) {
+        console.error('Error creating project:', err)
+        
+        
+        const errorMessage = err.response?.data?.message || 'Error creating project'
+        showError(errorMessage)
+        
+        throw err 
+      } finally {
+        setIsModalOpen(false)
+      }
+    }
+
   // Show project not found if we've checked and it doesn't exist
   if (projectNotFound) {
     return (
@@ -71,10 +119,17 @@ const ProjectPage = () => {
 
   return (
     <div className="p-4 md:p-6 text-white max-w-5xl mx-auto flex flex-col gap-6">
+      <div className='flex justify-between'>
       <h1 className="text-xl md:text-2xl font-bold">
         Available Routes <span className="text-blue-400">({slug})</span>
       </h1>
-
+      <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm md:text-base transition duration-200 self-start sm:self-auto"
+          >
+            + Create Route
+          </button>
+    </div>
       <div className="rounded-xl bg-[#2f2f2f] p-4 md:p-6 shadow-sm border border-[#3a3a3a]">
         <h2 className="text-lg font-medium mb-2">Project Overview</h2>
         <p className="text-sm text-gray-300 mb-1">
@@ -149,6 +204,7 @@ const ProjectPage = () => {
                   Updated: {new Date(route.updatedAt).toLocaleDateString("en-GB", {
                     day: "2-digit", month: "short", year: "numeric"
                   })}
+                  
                 </span>
               </div>
 
@@ -186,6 +242,14 @@ const ProjectPage = () => {
           ))}
         </div>
       )}
+
+            <CreateRouteModal 
+            isOpen={isModalOpen} 
+            closeModal={closeModal} 
+            onSubmit={handleRouteSubmit}
+            projectId={openProject._id}
+          />
+         
     </div>
   );
 };
