@@ -46,12 +46,7 @@ router.post('/project', ensureAuth, async (req, res)=> {
 
 router.post('/route', ensureAuth, async (req, res)=> {
 
-    // if(mockData?.length > 0) {
-    //     const chunks = createChunks(mockData).map((chunk, idx)=>{
-    //         routeId,
 
-    //     })
-    // }
     try {
 
         const {projectId, path, methods, logic, schema, mockData} = req.body
@@ -92,7 +87,7 @@ router.post('/route', ensureAuth, async (req, res)=> {
             );
         }
 
-
+        console.log(route)
         res.status(201).json({message:'Route created'})
 
 } catch (err) {

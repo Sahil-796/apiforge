@@ -4,7 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useCurrent } from '../context/CurrentContext';
 import { useParams } from 'react-router-dom';
 import CreateRouteModal from '../components/CreateRouteModal';
-import Loading from '../components/Loading'; // Import the new Loading component
+import Loading from '../components/Loading'; 
+import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProjectPage = () => {
   const { loading, projects } = useAuth()
@@ -74,6 +77,7 @@ const ProjectPage = () => {
         // Use the actual response data from server instead of just projectData
         const newRoute = res.data;
         setRoutes(prev => [...prev, newRoute])
+        console.log(routes)
         
         showSuccess()
         
@@ -245,8 +249,8 @@ const ProjectPage = () => {
 
             <CreateRouteModal 
             isOpen={isModalOpen} 
-            closeModal={closeModal} 
-            onSubmit={handleRouteSubmit}
+            closeModal={() => setIsModalOpen(false)} 
+            onSubmit={handleCreateRoute}
             projectId={openProject._id}
           />
          
