@@ -1,54 +1,83 @@
 const express = require('express')
 const router = express.Router();
-
+const axios = require('axios')
+require('dotenv').config()
 
 router.post('/generateData', async (req, res) => {
+  
     try {
-    const { message } = req.body.prompt;
-    
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+
+    const schema = typeof req.body.schema === 'string' ? req.body.schema : JSON.stringify(req.body.schema);
+    const prompt = req.body.prompt;
+
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required' });
     }
 
+    // Add explicit instruction to always use Google Search for real-world facts
+    const message = `You are a helpful AI assistant for a mock API generator. Your task is to generate only an array of documents, strictly following the JSON schema provided below. Do not include any explanations, comments, or extra text—just the array. Ensure the output is easily convertible to JSON on the frontend. If the prompt asks for real-world facts (like sports results, current events, or up-to-date information), you MUST ALWAYS use the Google Search tool to find the latest and most accurate answer before generating your response.\n\nJSON Schema:\n${schema}`;
 
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent',
       {
-      contents: [
+      "system_instruction": {
+        "parts": [
+        { "text": message }
+        ]
+      },
+      "contents": [
         {
-          parts: [
-            { text: message }
-          ]
+        "role": "user",
+        "parts": [
+          { "text": prompt }
+        ]
         }
       ],
-      tools: [
+      "tools": [
         {
-          google_search: {}
+        "googleSearch": {}
         }
-      ]
-    },
+      ],
+      },
       {
-        headers: {
-          'x-goog-api-key': GEMINI_API_KEY,
-          'Content-Type': 'application/json'
-        }
+      headers: {
+        'x-goog-api-key': process.env.GOOGLE_API_KEY,
+        'Content-Type': 'application/json'
+      }
       }
     );
+
 
     // Extract and return the response
     const geminiResponse = response.data;
     const candidate = geminiResponse.candidates?.[0];
+
     
     if (candidate?.content?.parts) {
       const textParts = candidate.content.parts
         .filter(part => part.text)
         .map(part => part.text)
         .join('\n');
+
       
+      
+      let jsonResponse;
+      try {
+        // Remove Markdown code block if present
+        const cleaned = textParts.replace(/^\s*```(?:json)?\s*|```\s*$/g, '');
+        jsonResponse = JSON.parse(cleaned);
+      } catch (e) {
+        // If parsing fails, return the raw text
+        return res.json({
+          success: false,
+          error: 'Failed to parse JSON from Gemini response',
+          rawResponse: textParts
+        });
+      }
+
       res.json({
         success: true,
-        response: textParts,
-        fullResponse: geminiResponse
+        response: jsonResponse,
       });
     } else {
       res.json({
@@ -66,3 +95,6 @@ router.post('/generateData', async (req, res) => {
     });
   }
 })
+
+
+module.exports = router;

@@ -134,10 +134,10 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
           schema: formData.schema
         })
         
-        if (response.data && response.data.mockData) {
+        if (response.data && response.data.response) {
           setFormData(prev => ({
             ...prev,
-            mockData: response.data.mockData
+            mockData: response.data.response
           }))
           setShowPromptSection(null)
           setPromptText('')

@@ -64,6 +64,9 @@ app.use('/api/create', create);
 const customEndpoints = require('./routes/customEndpoints');
 app.use('/apiforge', customEndpoints);
 
+const aiRoutes = require('./routes/ai');
+app.use('/api', aiRoutes);
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
