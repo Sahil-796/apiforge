@@ -133,6 +133,8 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
           prompt: promptText.trim(),
           schema: formData.schema
         })
+
+        console.log(response.data.response)
         
         if (response.data && response.data.response) {
           setFormData(prev => ({
@@ -185,11 +187,13 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
           prompt: promptText.trim(),
           schema: formData.schema
         })
+
+        console.log(response)
         
-        if (response.data && response.data.logic) {
+        if (response.data && response.data.response) {
           setFormData(prev => ({
             ...prev,
-            logic: response.data.logic
+            logic: response.data.response
           }))
           setShowPromptSection(null)
           setPromptText('')
@@ -222,6 +226,16 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
     setError('')
     
     try {
+
+  
+
+      if (formData.logic && formData.logic === 'function(input) {\n  // Write your code here\n}') {
+        setFormData(prev => ({
+          ...prev,
+          logic: {}
+        }))
+      }
+
       await onSubmit(formData)
     } catch (error) {
       console.error('Error creating route:', error)

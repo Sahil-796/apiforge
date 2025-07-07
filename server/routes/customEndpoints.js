@@ -94,7 +94,7 @@ router.post('/:slug/:path', async (req, res) => {
 
         if (!route) return res.status(404).json({ message: 'Route not found' })
 
-        if (route.logic.post) {
+        if (route.logic) {
             try {
                 data = await runIsolatedFunction(route.logic.post, data);
             } catch (err) {

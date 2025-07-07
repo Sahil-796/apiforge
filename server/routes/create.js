@@ -88,7 +88,7 @@ router.post('/route', ensureAuth, async (req, res)=> {
         }
 
         console.log(route)
-        res.status(201).json({message:'Route created'})
+        res.status(201).json(route)
 
 } catch (err) {
     console.error(err)
