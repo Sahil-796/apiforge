@@ -10,3 +10,6 @@ body {
   font-family: 'Space Grotesk', sans-serif;
 }
 
+button:hover, button:focus {
+  cursor: pointer;
+}

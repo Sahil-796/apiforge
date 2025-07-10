@@ -15,6 +15,7 @@ const ProjectPage = () => {
   const { openProject, setOpenProject, routes, setRoutes, setOpenRoute } = useCurrent();
   const [show, setShow] = useState(false)
   const [projectNotFound, setProjectNotFound] = useState(false)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     // Reset project not found state when id changes
@@ -184,6 +185,61 @@ const ProjectPage = () => {
           <span>Set this api key in header as x-api-key for any method call</span>
         </div>
       </div>
+
+      <button
+  onClick={() => setOpen(true)}
+  className="text-sm text-blue-400 hover:underline"
+>
+  How to Use This API
+</button>
+
+{open && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-[#1e1e1e] text-white w-full max-w-2xl mx-auto rounded-xl p-6 shadow-lg relative overflow-y-auto max-h-[90vh]">
+      <button
+        onClick={() => setOpen(false)}
+        className="absolute top-3 right-4 text-gray-400 hover:text-red-400 text-xl"
+      >
+        ×
+      </button>
+
+      <h2 className="text-xl font-semibold mb-4">How to Use This API</h2>
+
+      {/* Endpoint */}
+      <p className="text-sm text-gray-400 mb-1">📡 Endpoint:</p>
+      <code className="block bg-[#2b2b2b] text-white font-mono text-sm p-3 rounded mb-4 break-all">
+        https://your-vercel-url.vercel.app/apiforge/{slug}/<span className="text-pink-400">path-name</span>
+      </code>
+
+      {/* API Key Header */}
+      <p className="text-sm text-gray-400 mb-1">🔐 Header:</p>
+      <code className="block bg-[#2b2b2b] text-green-400 font-mono text-sm p-3 rounded mb-2 break-all">
+        x-api-key: {show ? apiKey : '••••••••••'}
+      </code>
+      <button
+        onClick={() => setShow(!show)}
+        className="text-blue-400 text-xs hover:underline mb-4"
+      >
+        {show ? 'Hide API Key' : 'Show API Key'}
+      </button>
+
+      {/* Curl Example */}
+      <p className="text-sm text-gray-400 mb-1">🧪 CURL Example:</p>
+      <pre className="bg-[#2b2b2b] text-green-400 font-mono text-xs p-4 rounded-lg mb-4 overflow-auto">
+        {`curl -X POST https://your-vercel-url.vercel.app/apiforge/${slug}/path-name \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: ${apiKey}" \\
+  -d '{"your": "data"}'`}
+      </pre>
+
+      {/* Pagination */}
+      <p className="text-sm text-gray-400">
+        📄 Use <code className="bg-[#333] px-1 py-0.5 rounded text-white font-mono text-xs">?page=1</code> to paginate.
+      </p>
+    </div>
+  </div>
+)}
+
 
       {!routes || routes.length === 0 ? (
         <div className="text-center py-8">

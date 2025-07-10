@@ -3,13 +3,14 @@ import {useAuth} from '../context/DataContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate()
   
    const { fetchUser } = useAuth()
    
    const [error, setError] = useState("")
    const [email, setEmail] = useState("")
+   const [username, setUsername] = useState("")
    const [password, setPassword] = useState("")
    const [loading, setLoading] = useState(false)
 
@@ -19,8 +20,8 @@ const Login = () => {
         setLoading(true)
 
         try {
-          const res = await axios.post('http://localhost:3000/api/auth/login',
-            {email, password},
+          const res = await axios.post('http://localhost:3000/api/auth/signup',
+            {username, email, password},
             {withCredentials: true,
               headers: {
                 'Content-Type': 'application/json'
@@ -33,7 +34,7 @@ const Login = () => {
     
         } catch (err) {
     
-          setError(err.response?.data?.message || 'Login failed');
+          setError(err.response?.data?.message || 'Registration failed');
         } finally {
           setLoading(false);
         }
@@ -63,6 +64,15 @@ const Login = () => {
 
         <div className='flex flex-col gap-4'>
         
+        <div className='flex flex-col gap-2'>
+        <label htmlFor="email">Username</label>        
+        <input 
+        value={username}
+        onChange={((e)=>setUsername(e.target.value))}
+        required
+        className='px-4 py-1 outline-1 outline-white rounded-sm bg-[#1a1a1a]' type="text" placeholder="Username" />
+        </div>
+
         <div className='flex flex-col gap-2'>
         <label htmlFor="email">Email</label>        
         <input 
@@ -117,11 +127,11 @@ const Login = () => {
 }
 
       </div>
-      <div>Do not have an account ? <button className='text-blue-500' onClick={()=>navigate('/register')}>Create new</button></div>
+       <div>Already have an account ? <button className='text-blue-500' onClick={()=>navigate('/login')}>Login</button></div>
 
      </div>
   
   );
 };
 
-export default Login;
+export default Register;

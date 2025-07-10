@@ -38,7 +38,7 @@ const Loading = ({
 
   // Simple full-screen loading (for pages without sidebar)
   return (
-    <div className="min-h-screen bg-[#1a1a1a] flex flex-col gap-3 items-center justify-center px-4">
+    <div className="min-h-screen bg-[#1a1a1a] flex flex-col gap-6 items-center justify-center px-4">
       <PropagateLoader 
         color={color} 
         size={size} 

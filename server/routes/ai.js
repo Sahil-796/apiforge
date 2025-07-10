@@ -107,7 +107,10 @@ router.post('/generateLogic', async (req, res) => {
     }
 
     // Explicitly instruct to generate only logic, not example data or objects
-    const message = `You are a helpful AI assistant for a mock API POST method logic generator. Your task is to generate only the logic (JavaScript code) for a POST method, strictly following the JSON schema and the prompt below. Do NOT generate any example data, objects, or sample values (like "Honda Civic" or similar). Only generate the code logic that processes the input according to the schema and prompt. Do not include explanations, comments, or extra text—just the code inside a function(input){} block. Output only the code inside the function.\n\nJSON Schema:\n${schema}`;
+    const message = `You are an expert AI assistant for generating JavaScript logic for a mock API POST method. Your job is to write only the logic (JavaScript code) for a POST endpoint, strictly following the JSON schema and the prompt below. Always return an object based on the input and the prompt—never return undefined or null. If the prompt includes conditions (e.g., "do not return if age < 17"), apply them, but always return an object (possibly empty if required). Do NOT generate example data, sample values, or objects—just the logic code that processes the input as described. Output only the code inside a function(input){} block, with no explanations, comments, or extra text.
+
+    JSON Schema:
+    ${schema}`;
 
     const response = await axios.post(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent',
