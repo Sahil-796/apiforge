@@ -160,12 +160,6 @@ const Home = () => {
         theme="dark"
       />
 
-      <button 
-        onClick={logout}
-        className="mt-6 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition duration-200"
-      >
-        Logout
-      </button>
 
       {/* Create Project Modal */}
       <CreateProjectModal
