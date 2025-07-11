@@ -53,7 +53,7 @@ const Home = () => {
     // Handle project creation
     const handleCreateProject = async (projectData) => {
       try {
-        console.log('Creating project:', projectData)
+        
         
         const res = await axios.post('http://localhost:3000/api/create/project',
             projectData,

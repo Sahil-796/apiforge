@@ -63,7 +63,7 @@ const ProjectPage = () => {
       // Handle project creation
     const handleCreateRoute = async (routeData) => {
       try {
-        console.log('Creating project:', routeData)
+
         
         const res = await axios.post('http://localhost:3000/api/create/route',
             routeData,
@@ -78,7 +78,7 @@ const ProjectPage = () => {
         // Use the actual response data from server instead of just projectData
         const newRoute = res.data;
         setRoutes(prev => [...prev, newRoute])
-        console.log(routes)
+   
         
         showSuccess()
         

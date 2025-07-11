@@ -19,7 +19,7 @@ export const DataProvider = ({children}) => {
     const fetchUser = async () => {
         try{
             setLoading(true)
-            const res = await axios.get('http://localhost:3000/api/me', {
+            const res = await axios.get('https://apiforge-ml87.onrender.com/api/me', {
                 withCredentials: true
             })
             setUser(res.data)
@@ -34,7 +34,7 @@ export const DataProvider = ({children}) => {
     }
 
     const logout = async () => {
-        await axios.get('http://localhost:3000/api/auth/logout',{
+        await axios.get('https://apiforge-ml87.onrender.com/api/auth/logout',{
             withCredentials: true
         })
         setUser(null)

@@ -16,13 +16,13 @@ export const CurrentProvider = ({children}) => {
     const fetchRoutes = async (projectId) => {
         try {
             setLoading(true)
-            const res = await axios.post('http://localhost:3000/api/routes', {
+            const res = await axios.post('https://apiforge-ml87.onrender.com/api/routes', {
                 projectId: projectId,
                 withCredentials: true
             })
             setRoutes(res.data)
         } catch (err) {
-            console.log(err)
+           
             setRoutes([]) 
         } finally {
             setLoading(false)

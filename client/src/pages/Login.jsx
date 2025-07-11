@@ -19,7 +19,7 @@ const Login = () => {
         setLoading(true)
 
         try {
-          const res = await axios.post('http://localhost:3000/api/auth/login',
+          const res = await axios.post('https://apiforge-ml87.onrender.com/api/auth/login',
             {email, password},
             {withCredentials: true,
               headers: {
@@ -40,7 +40,7 @@ const Login = () => {
         }
     
         const handleGoogleLogin = () => {
-          window.location.href = 'http://localhost:3000/api/auth/google';
+          window.location.href = 'https://apiforge-ml87.onrender.com/api/auth/google';
 
         };
 

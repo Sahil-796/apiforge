@@ -41,8 +41,8 @@ app.use(session({
   cookie: {
     maxAge: 1000*60*60*24*7, 
   httpOnly: true,
-  secure: false, //change to true in prod - cip
-  sameSite: 'lax'
+  secure: true, //change to true in prod - cip
+  sameSite: 'none'
 }
 }))
 

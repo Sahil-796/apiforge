@@ -134,7 +134,6 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
           schema: formData.schema
         })
 
-        console.log(response.data.response)
         
         if (response.data && response.data.response) {
           setFormData(prev => ({
@@ -188,7 +187,6 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
           schema: formData.schema
         })
 
-        console.log(response)
         
         if (response.data && response.data.response) {
           setFormData(prev => ({
