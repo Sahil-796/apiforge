@@ -43,7 +43,7 @@ app.use(session({
     maxAge: 1000*60*60*24*7, 
   httpOnly: true,
   secure: true, //change to true in prod - cip
-  sameSite: 'lax'
+  sameSite: 'none'
 }
 }))
 
