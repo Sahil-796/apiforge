@@ -129,7 +129,7 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
       setError('')
       
       try {
-        const response = await axios.post('http://localhost:3000/api/generateData', {
+        const response = await axios.post('https://apiforge-ml87.onrender.com/api/generateData', {
           prompt: promptText.trim(),
           schema: formData.schema
         })
@@ -182,7 +182,7 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
       setError('')
       
       try {
-        const response = await axios.post('http://localhost:3000/api/generateLogic', {
+        const response = await axios.post('https://apiforge-ml87.onrender.com/api/generateLogic', {
           prompt: promptText.trim(),
           schema: formData.schema
         })

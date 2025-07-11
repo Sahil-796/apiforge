@@ -55,7 +55,7 @@ const Home = () => {
       try {
         
         
-        const res = await axios.post('http://localhost:3000/api/create/project',
+        const res = await axios.post('https://apiforge-ml87.onrender.com/api/create/project',
             projectData,
             {
                 withCredentials: true,
