@@ -68,7 +68,7 @@ router.get('/google',
 router.get('/google/callback',
   passport.authenticate('google', {
     failureRedirect: '/api/auth/failure',
-    successRedirect: 'http://localhost:5173/',
+    successRedirect: 'https://apiforge-orpin.vercel.app/',
   }),
    
 );

@@ -13,8 +13,8 @@ const corsOptions = {
   origin: [
     
     'https://bfc56k0q-5173.inc1.devtunnels.ms',
-    'http://localhost:5173'
-   
+    'http://localhost:5173',
+    'https://apiforge-orpin.vercel.app'
   ],
   credentials: true
 };
