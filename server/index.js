@@ -10,8 +10,14 @@ require('dotenv').config()
 
 
 const corsOptions = {
-  origin: 'https://apiforge-orpin.vercel.app',
-  credentials: true
+  origin: [
+    'https://bfc56k0q-5173.inc1.devtunnels.ms',
+    'http://localhost:5173',
+    'https://apiforge-orpin.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
@@ -27,7 +33,7 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(()=> console.log("MongoDB connected"))
   .catch(err=> console.log(err))
   
-  
+app.set('trust proxy', 1)
 app.use(session({
   secret: 'secret123',
   resave: false,
