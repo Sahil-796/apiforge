@@ -45,10 +45,6 @@ const Register = () => {
 
         };
 
-
-
-
-
   return (
     <div className='bg-[#1a1a1a]  min-h-dvh flex flex-col items-center justify-center text-white gap-6 p-4 '>
 

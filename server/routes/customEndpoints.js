@@ -25,6 +25,20 @@ router.get('/:slug/:path', async (req, res) => {
         const route = await Route.findOne({ path: `/${path}`, ProjectId: project._id })
         console.log(project)
         if (!route) return res.status(404).json({ message: 'Route not found' })
+        
+        let found = false
+        if (route.methods.length > 0) {
+            for (let i = 0; i<route.methods.length; i++){
+                if (route.methods[i]==='GET'){
+                    found = true
+                    break
+                }
+            }
+        }
+
+        if (!found){
+            return res.status(405).json({message: 'Method not allowed'})
+        }
 
         const mockData = await MockData.findOne({ routeId: route._id, index: page })
         if (!mockData) return res.status(404).json({ message: 'Mock Data not found' })
@@ -54,6 +68,20 @@ router.get('/:slug/:path/:id', async(req, res)=>{
     
     const route = await Route.findOne({path:`/${path}`, ProjectId: project._id})
     if(!route) return res.status(404).json({message:'Route not found'})
+
+    let found = false
+    if (route.methods.length > 0) {
+        for (let i = 0; i<route.methods.length; i++){
+            if (route.methods[i]==='GET'){
+                found = true
+                break
+            }
+        }
+    }
+
+    if (!found){
+        return res.status(405).json({message: 'Method not allowed'})
+    }
    
     const chunk = await MockData.findOne({
         routeId: route._id,
@@ -90,6 +118,19 @@ router.post('/:slug/:path', async (req, res) => {
        
         const route = await Route.findOne({ path: `/${path}`, ProjectId: project._id })
         
+        let found = false
+        if (route.methods.length > 0) {
+            for (let i = 0; i<route.methods.length; i++){
+                if (route.methods[i]==='POST'){
+                    found = true
+                    break
+                }
+            }
+        }
+
+        if (!found){
+            return res.status(405).json({message: 'Method not allowed'})
+        }
 
 
         if (!route) return res.status(404).json({ message: 'Route not found' })
@@ -157,6 +198,20 @@ router.delete('/:slug/:path/:id', async (req, res)=> {
         const route = await Route.findOne({ path: path, ProjectId: project._id })
         if (!route) return res.status(404).json({ message: 'Route not found' })
 
+        let found = false
+        if (route.methods.length > 0) {
+            for (let i = 0; i<route.methods.length; i++){
+                if (route.methods[i]==='DELETE'){
+                    found = true
+                    break
+                }
+            }
+        }
+
+        if (!found){
+            return res.status(405).json({message: 'Method not allowed'})
+        }
+
         const result = await MockData.updateOne(
             { routeId: route._id, 'data.id': id },
             { $pull: { data: { id } } }
@@ -195,6 +250,20 @@ router.put('/:slug/:path/:id', async (req, res)=> {
 
         const route = await Route.findOne({ path: path, ProjectId: project._id })
         if (!route) return res.status(404).json({ message: 'Route not found' })
+
+        let found = false
+        if (route.methods.length > 0) {
+            for (let i = 0; i<route.methods.length; i++){
+                if (route.methods[i]==='PUT'){
+                    found = true
+                    break
+                }
+            }
+        }
+
+        if (!found){
+            return res.status(405).json({message: 'Method not allowed'})
+        }
 
         const result = await MockData.updateOne(
             { routeId: route._id, 'data.id': id },

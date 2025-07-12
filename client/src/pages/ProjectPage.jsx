@@ -124,7 +124,7 @@ const ProjectPage = () => {
 
   return (
     <div className="p-4 md:p-6 text-white max-w-5xl mx-auto flex flex-col gap-6">
-      <div className='flex justify-between'>
+      <div className='flex justify-between flex-col gap-3 md:flex-row'>
       <h1 className="text-xl md:text-2xl font-bold">
         Available Routes <span className="text-blue-400">({slug})</span>
       </h1>
@@ -208,7 +208,7 @@ const ProjectPage = () => {
       {/* Endpoint */}
       <p className="text-sm text-gray-400 mb-1">📡 Endpoint:</p>
       <code className="block bg-[#2b2b2b] text-white font-mono text-sm p-3 rounded mb-4 break-all">
-        https://your-vercel-url.vercel.app/apiforge/{slug}/<span className="text-pink-400">path-name</span>
+        https://apiforge-ml87.onrender.com/apiforge/{slug}/<span className="text-pink-400">path-name</span>
       </code>
 
       {/* API Key Header */}
@@ -226,7 +226,7 @@ const ProjectPage = () => {
       {/* Curl Example */}
       <p className="text-sm text-gray-400 mb-1">🧪 CURL Example:</p>
       <pre className="bg-[#2b2b2b] text-green-400 font-mono text-xs p-4 rounded-lg mb-4 overflow-auto">
-        {`curl -X POST https://your-vercel-url.vercel.app/apiforge/${slug}/path-name \\
+        {`curl -X POST https://apiforge-ml87.onrender.com/apiforge/${slug}/path-name \\
   -H "Content-Type: application/json" \\
   -H "x-api-key: ${apiKey}" \\
   -d '{"your": "data"}'`}
@@ -235,6 +235,9 @@ const ProjectPage = () => {
       {/* Pagination */}
       <p className="text-sm text-gray-400">
         📄 Use <code className="bg-[#333] px-1 py-0.5 rounded text-white font-mono text-xs">?page=1</code> to paginate.
+      </p>
+      <p className="text-sm text-gray-400">
+        📄 Use <code className="bg-[#333] px-1 py-0.5 rounded text-white font-mono text-xs">/id</code> in GET to retrieve a specific document.
       </p>
     </div>
   </div>

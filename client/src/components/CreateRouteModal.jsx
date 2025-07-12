@@ -22,6 +22,7 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
   const [error, setError] = useState('')
   const [showPromptSection, setShowPromptSection] = useState(null) // 'mockData' or 'logic'
   const [promptText, setPromptText] = useState('')
+  const [useLogic, setUseLogic] = useState(false) // New state for logic toggle
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -42,6 +43,7 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
       setError('')
       setShowPromptSection(null)
       setPromptText('')
+      setUseLogic(false) // Reset logic toggle
     }
   }, [isOpen, projectId])
 
@@ -63,6 +65,17 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
         : [...prev.methods, method]
     }))
     if (error) setError('')
+  }
+
+  const handleLogicToggle = () => {
+    setUseLogic(prev => !prev)
+    // Clear any existing logic-related errors
+    if (error) setError('')
+    // Close prompt section if it's open
+    if (showPromptSection === 'logic') {
+      setShowPromptSection(null)
+      setPromptText('')
+    }
   }
 
   const addSchemaField = () => {
@@ -224,17 +237,18 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
     setError('')
     
     try {
-
-  
-
-      if (formData.logic && formData.logic === 'function(input) {\n  // Write your code here\n}') {
-        setFormData(prev => ({
-          ...prev,
-          logic: {}
-        }))
+      // Prepare form data with logic handling
+      const submitData = {
+        ...formData,
+        logic: useLogic ? formData.logic : null
       }
 
-      await onSubmit(formData)
+      // If logic is enabled but still has default template, set to null
+      if (useLogic && formData.logic === 'function(input) {\n  // Write your code here\n}') {
+        submitData.logic = null
+      }
+
+      await onSubmit(submitData)
     } catch (error) {
       console.error('Error creating route:', error)
       if (error.response) {
@@ -472,77 +486,114 @@ const CreateRouteModal = ({ isOpen, closeModal, onSubmit, projectId }) => {
                     </p>
                   </div>
 
-                  {/* Logic */}
+                  {/* Logic Toggle */}
                   <div>
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center justify-between mb-2">
                       <label className="block text-sm font-medium text-gray-300">
                         Logic Function
                       </label>
-                      <button
-                        type="button"
-                        onClick={generateLogic}
-                        disabled={isGeneratingLogic || isLoading}
-                        className="px-3 py-1 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 disabled:opacity-50 text-white rounded text-sm flex items-center space-x-1"
-                      >
-                        {isGeneratingLogic && (
-                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        )}
-                        <span>✨ {showPromptSection === 'logic' ? 'Generate' : 'Generate with AI'}</span>
-                      </button>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-sm text-gray-400">
+                          {useLogic ? 'Enabled' : 'Disabled'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleLogicToggle}
+                          disabled={isLoading}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                            useLogic ? 'bg-blue-600' : 'bg-gray-600'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              useLogic ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
                     </div>
                     
-                    {/* AI Prompt Section for Logic */}
-                    {showPromptSection === 'logic' && (
-                      <div className="mt-3 p-4 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg">
-                        <h4 className="text-sm font-medium text-white mb-2">Describe the logic you want this endpoint to perform:</h4>
-                        <textarea
-                          value={promptText}
-                          onChange={(e) => setPromptText(e.target.value)}
-                          rows={3}
-                          className="w-full px-3 py-2 bg-[#2f2f2f] border border-[#4a4a4a] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-sm"
-                          placeholder="e.g., Validate user input, check if email exists in database, create user profile, and return success message"
-                          disabled={isGeneratingLogic}
-                        />
-                        <div className="flex justify-end space-x-2 mt-3">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowPromptSection(null)
-                              setPromptText('')
-                            }}
-                            disabled={isGeneratingLogic}
-                            className="px-3 py-1 text-sm text-gray-400 hover:text-white transition duration-200 disabled:opacity-50"
-                          >
-                            Cancel
-                          </button>
+                    {/* Logic Content - Only show when enabled */}
+                    {useLogic && (
+                      <>
+                        <div className="flex justify-between items-center mb-2">
+                          <div></div>
                           <button
                             type="button"
                             onClick={generateLogic}
-                            disabled={isGeneratingLogic || !promptText.trim()}
+                            disabled={isGeneratingLogic || isLoading}
                             className="px-3 py-1 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 disabled:opacity-50 text-white rounded text-sm flex items-center space-x-1"
                           >
                             {isGeneratingLogic && (
                               <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             )}
-                            <span>Generate</span>
+                            <span>✨ {showPromptSection === 'logic' ? 'Generate' : 'Generate with AI'}</span>
                           </button>
                         </div>
-                      </div>
+                        
+                        {/* AI Prompt Section for Logic */}
+                        {showPromptSection === 'logic' && (
+                          <div className="mt-3 p-4 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg">
+                            <h4 className="text-sm font-medium text-white mb-2">Describe the logic you want this endpoint to perform:</h4>
+                            <textarea
+                              value={promptText}
+                              onChange={(e) => setPromptText(e.target.value)}
+                              rows={3}
+                              className="w-full px-3 py-2 bg-[#2f2f2f] border border-[#4a4a4a] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-sm"
+                              placeholder="e.g., Validate user input, check if email exists in database, create user profile, and return success message"
+                              disabled={isGeneratingLogic}
+                            />
+                            <div className="flex justify-end space-x-2 mt-3">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setShowPromptSection(null)
+                                  setPromptText('')
+                                }}
+                                disabled={isGeneratingLogic}
+                                className="px-3 py-1 text-sm text-gray-400 hover:text-white transition duration-200 disabled:opacity-50"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="button"
+                                onClick={generateLogic}
+                                disabled={isGeneratingLogic || !promptText.trim()}
+                                className="px-3 py-1 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 disabled:opacity-50 text-white rounded text-sm flex items-center space-x-1"
+                              >
+                                {isGeneratingLogic && (
+                                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                )}
+                                <span>Generate</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <textarea
+                          value={formData.logic}
+                          onChange={(e) => {
+                            setFormData(prev => ({ ...prev, logic: e.target.value }))
+                            if (error) setError('')
+                          }}
+                          rows={8}
+                          className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                          disabled={isLoading}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Write your function logic here. Use vm2 sandbox for secure execution.
+                        </p>
+                      </>
                     )}
                     
-                    <textarea
-                      value={formData.logic}
-                      onChange={(e) => {
-                        setFormData(prev => ({ ...prev, logic: e.target.value }))
-                        if (error) setError('')
-                      }}
-                      rows={8}
-                      className="w-full px-3 py-2 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
-                      disabled={isLoading}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Write your function logic here. Use vm2 sandbox for secure execution.
-                    </p>
+                    {/* Disabled message */}
+                    {!useLogic && (
+                      <div className="p-4 bg-[#1a1a1a] border border-[#3a3a3a] rounded-lg">
+                        <p className="text-sm text-gray-400 text-center">
+                          Logic function is disabled. Toggle the switch above to enable custom logic.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Error Message */}

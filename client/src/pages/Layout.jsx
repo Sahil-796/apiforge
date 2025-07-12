@@ -15,9 +15,9 @@ const Layout = () => {
   if (!user) return <Navigate to="/login" replace />;
   
   return (
-    <div className="min-h-dvh flex flex-col md:flex-row">
+    <div className="h-dvh overflow-hidden flex flex-col md:flex-row">
       <Sidebar />
-      <main className="flex-1 bg-[#1a1a1a] text-white p-4">
+      <main className="flex-1 bg-[#1a1a1a] text-white p-4 overflow-y-auto">
         <Outlet />
       </main>
     </div>
