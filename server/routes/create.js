@@ -67,7 +67,7 @@ router.post('/route', ensureAuth, async (req, res)=> {
             userId: req.user._id,
             path,
             methods,
-            logic: logic || {},
+            logic: logic,
             schema
         })
         
